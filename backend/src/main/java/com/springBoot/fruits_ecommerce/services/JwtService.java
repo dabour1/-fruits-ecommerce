@@ -4,11 +4,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
 import org.springframework.stereotype.Service;
 
+import com.springBoot.fruits_ecommerce.models.Role;
 import com.springBoot.fruits_ecommerce.models.User;
 
 import io.jsonwebtoken.Claims;
@@ -39,8 +41,19 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
      public String generateToken(User user) {
+
+        Map<String, Object> extraClaims = addExtraClaims(user);
     
-        return createToken( user,new HashMap<>() );
+        return createToken( user,extraClaims );
+    }
+    private Map <String, Object>addExtraClaims(User user ){
+          Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("roles", user.getRoles().stream()
+            .map(Role::getName)
+            .collect(Collectors.toList()));
+
+        return extraClaims;
+
     }
      public String generateToken(User user,Map<String, Object> extraClaims) {
     
