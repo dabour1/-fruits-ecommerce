@@ -11,8 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
- 
 
+import com.springBoot.fruits_ecommerce.models.AuthenticationRequest;
 import com.springBoot.fruits_ecommerce.models.AuthenticationResponse;
 import com.springBoot.fruits_ecommerce.models.User;
 import com.springBoot.fruits_ecommerce.repositorys.UserRepository;
@@ -49,8 +49,20 @@ public class AuthenticationService {
 
     }
 
-    public AuthenticationResponse authenticat(User request) throws Exception  {
-         
+    public AuthenticationResponse authenticat(AuthenticationRequest request) throws Exception  {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(),
+                     request.getPassword())
+            );
+        } catch (BadCredentialsException e) {
+            throw new IllegalArgumentException("Incorrect username or password", e);
+        }
+
+        Optional<User>  user = userRepository.findByEmail(request.getEmail());
+        final String jwtToken = jwtService.generateToken(user.get());
+
+        return new AuthenticationResponse(jwtToken);
     }
 
 
