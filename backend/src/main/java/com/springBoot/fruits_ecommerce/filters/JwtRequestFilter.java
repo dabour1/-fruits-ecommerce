@@ -27,38 +27,57 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtService jwtService;
 
+     
     @Override
-    protected void doFilterInternal
-    (@NonNull HttpServletRequest request,
-     @NonNull HttpServletResponse response,
-      @NonNull FilterChain chain)
-        throws ServletException, IOException {
-
-        final String authorizationHeader = request.getHeader("Authorization");
-
-        String email = null;
-        String jwt = null;
-
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            
-            jwt = authorizationHeader.substring(7);
-            email = jwtService.extractEmail(jwt);
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                @NonNull HttpServletResponse response,
+                                @NonNull FilterChain chain)
+                                 throws ServletException, IOException {
+    
+  
+            if (isAuthRequest(request)) {
+                chain.doFilter(request, response);
+                return;
+            }
+        
+            String jwt = extractJwtFromRequest(request);
+            String email = (jwt != null) ? jwtService.extractEmail(jwt) : null;
+        
+            if (email != null && isNotAuthenticated()) {
+                authenticateUser(request, jwt, email);
+            }
+        
+            chain.doFilter(request, response);
         }
-
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
+        private boolean isAuthRequest(HttpServletRequest request) {
+            return request.getServletPath().contains("/api/auth");
+        }
+        private String extractJwtFromRequest(HttpServletRequest request) {
+            final String authorizationHeader = request.getHeader("Authorization");
+            
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                return authorizationHeader.substring(7);
+            }
+            return null;
+        }
+        private boolean isNotAuthenticated() {
+            return SecurityContextHolder.getContext().getAuthentication() == null;
+        }
+        private void authenticateUser(HttpServletRequest request, String jwt, String email) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
 
-            if (jwtService.validateToken(jwt, userDetails.getUsername())) {
-
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken
-                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+            if (jwtService.validateToken(jwt, userDetails.getUsername())) { 
+                UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         }
-        chain.doFilter(request, response);
-    }
+
+
+
 }
+
+
 
