@@ -31,7 +31,21 @@ public class AuthenticationService {
     @Autowired
     private UserDetailsService userDetailsService;
     
-    public AuthenticationResponse register(User request  ){ 
+    public AuthenticationResponse register(User request  ){
+        Optional<User>   userNameExisting = userRepository.findByUsername(request.getUsername());
+        if (userNameExisting.isPresent()) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+
+        Optional<User>   emailExisting = userRepository.findByEmail(request.getEmail());
+        if (emailExisting.isPresent()) {
+            
+            throw new IllegalArgumentException("Email already exists");
+        }
+        request.setPassword(passwordEncoder.encode(request.getPassword()));
+        User user = userRepository.save(request);
+        final String jwtToken = jwtService.generateToken(user);
+        return new AuthenticationResponse(jwtToken);
 
     }
 
