@@ -16,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,6 +29,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "users")
 public class User  implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,8 +43,9 @@ public class User  implements UserDetails{
     private String email;
     @NotBlank(message = "password is required")
     @NotNull(message ="password cannot be null")
-    @Size(min = 8, max = 50, message = "password must be between 2 and 50 characters")
+    @Size(min = 8, max = 200, message = "password must be between 8 and 50 characters")
     private String password;
+ 
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
