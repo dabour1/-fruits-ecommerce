@@ -77,6 +77,14 @@ public class AuthenticationServiceTest {
         assertTrue(user.getRoles().contains(clientRole));
         verify(userRepository ).save(user);
     }
+    @Test
+    public void testRegister_UserNameAlreadyExists() {
+        when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+        Exception exception =  assertThrows(IllegalArgumentException.class, () -> authenticationService.register(user));
+        assertEquals("Username already exists", exception.getMessage());
+        verify(userRepository, times(0)).save(user);
+    }
+
    
 
 }
