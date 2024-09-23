@@ -7,15 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+ 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.springBoot.fruits_ecommerce.enums.RoleName;
 import com.springBoot.fruits_ecommerce.models.AuthenticationRequest;
 import com.springBoot.fruits_ecommerce.models.AuthenticationResponse;
-import com.springBoot.fruits_ecommerce.models.Role;
+ 
 import com.springBoot.fruits_ecommerce.models.User;
 import com.springBoot.fruits_ecommerce.repositorys.RoleRepository;
 import com.springBoot.fruits_ecommerce.repositorys.UserRepository;
@@ -50,7 +49,7 @@ public class AuthenticationService {
             .orElseThrow(() -> new IllegalArgumentException("Default role not found"));
 
     
-    request.getRoles().add(defaultRole);
+       request.getRoles().add(defaultRole);
         User user = userRepository.save(request);
         final String jwtToken = jwtService.generateToken(user);
         return new AuthenticationResponse(jwtToken);
