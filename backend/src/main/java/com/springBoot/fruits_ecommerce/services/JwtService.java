@@ -37,7 +37,7 @@ public class JwtService {
         return Jwts.parser().verifyWith( getSigningKey()).build().parseSignedClaims(token).getPayload();
     }
 
-    private Boolean isTokenExpired(String token) {
+    public Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
      public String generateToken(User user) {

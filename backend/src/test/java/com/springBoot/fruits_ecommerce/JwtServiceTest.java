@@ -46,4 +46,20 @@ public class JwtServiceTest {
         assertTrue(token.length() > 0);
     }
 
+    @Test
+    public void testExtractEmail() {
+         
+        String token = jwtService.generateToken(user, new HashMap<>()); 
+        String email = jwtService.extractEmail(token); 
+        assertEquals("user@example.com", email);
+    }
+    @Test
+    public void testIsTokenExpired() { 
+        String token = jwtService.generateToken(user, new HashMap<>());
+ 
+        Boolean isExpired = jwtService.isTokenExpired(token);
+ 
+        assertFalse(isExpired);   
+    }
+
 }
