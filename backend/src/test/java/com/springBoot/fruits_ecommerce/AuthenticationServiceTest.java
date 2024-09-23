@@ -60,6 +60,23 @@ public class AuthenticationServiceTest {
      
     }
  
+    @Test 
+    public void testRegister_Success() {
+        when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
+        when(roleRepository.findByName(RoleName.CLIENT)).thenReturn(Optional.of(clientRole));
+        when(passwordEncoder.encode(user.getPassword())).thenReturn("encodedPassword");
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(jwtService.generateToken(user)).thenReturn("jwtToken"); 
+      
+        AuthenticationResponse response = authenticationService.register(user);
+        
+        assertNotNull(response);
+        assertEquals("jwtToken", response.getToken());
+        assertEquals("encodedPassword", user.getPassword());
+        assertTrue(user.getRoles().contains(clientRole));
+        verify(userRepository ).save(user);
+    }
    
 
 }
