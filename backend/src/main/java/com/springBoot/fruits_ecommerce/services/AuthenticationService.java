@@ -12,9 +12,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.springBoot.fruits_ecommerce.enums.RoleName;
 import com.springBoot.fruits_ecommerce.models.AuthenticationRequest;
 import com.springBoot.fruits_ecommerce.models.AuthenticationResponse;
+import com.springBoot.fruits_ecommerce.models.Role;
 import com.springBoot.fruits_ecommerce.models.User;
+import com.springBoot.fruits_ecommerce.repositorys.RoleRepository;
 import com.springBoot.fruits_ecommerce.repositorys.UserRepository;
 
 @Service
@@ -29,7 +32,7 @@ public class AuthenticationService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private RoleRepository roleRepository;
     
     public AuthenticationResponse register(User request  ){
         Optional<User>   userNameExisting = userRepository.findByUsername(request.getUsername());
@@ -43,6 +46,11 @@ public class AuthenticationService {
             throw new IllegalArgumentException("Email already exists");
         }
         request.setPassword(passwordEncoder.encode(request.getPassword()));
+        var defaultRole = roleRepository.findByName(RoleName.CLIENT)
+            .orElseThrow(() -> new IllegalArgumentException("Default role not found"));
+
+    
+    request.getRoles().add(defaultRole);
         User user = userRepository.save(request);
         final String jwtToken = jwtService.generateToken(user);
         return new AuthenticationResponse(jwtToken);
