@@ -20,9 +20,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.springBoot.fruits_ecommerce.enums.RoleName;
+import com.springBoot.fruits_ecommerce.models.AuthenticationRequest;
 import com.springBoot.fruits_ecommerce.models.AuthenticationResponse;
 import com.springBoot.fruits_ecommerce.models.Role;
 import com.springBoot.fruits_ecommerce.models.User;
@@ -41,7 +45,8 @@ public class AuthenticationServiceTest {
     private JwtService jwtService;
     @Mock
     private PasswordEncoder passwordEncoder;
-
+ @Mock
+    private AuthenticationManager authenticationManager;
     
     @InjectMocks
     private AuthenticationService authenticationService;
@@ -103,5 +108,29 @@ public class AuthenticationServiceTest {
         assertEquals("Default role not found", exception.getMessage());
         verify(userRepository, times(0)).save(user);
      }
+     @Test
+    public void testAuthenticat_Success()throws Exception {
+         AuthenticationRequest request = new AuthenticationRequest("dabour8@gmail.com", "password");
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(null);
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
+        when(jwtService.generateToken(user)).thenReturn("token");
+        
+        AuthenticationResponse response = authenticationService.authenticat(request);
+         
+        assertEquals("token", response.getToken());
+        verify(jwtService ).generateToken(user);
+        
+    }
+    @Test
+    public void testAuthenticat_IncorrectEmail() throws Exception {
+        AuthenticationRequest request = new AuthenticationRequest("dabour8@gmail.com", "password");
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenThrow(BadCredentialsException.class);
+        Exception exception =  assertThrows(IllegalArgumentException.class, () -> authenticationService.authenticat(request));
+        
+        assertEquals("Incorrect email or password", exception.getMessage());
+        verify(authenticationManager ).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        verify(jwtService, times(0)).generateToken(user);
+    }
+    
 
 }

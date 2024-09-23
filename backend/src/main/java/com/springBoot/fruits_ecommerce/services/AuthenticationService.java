@@ -63,11 +63,11 @@ public class AuthenticationService {
                      request.getPassword())
             );
         } catch (BadCredentialsException e) {
-            throw new IllegalArgumentException("Incorrect username or password", e);
+            throw new IllegalArgumentException("Incorrect email or password", e);
         }
 
-        Optional<User>  user = userRepository.findByEmail(request.getEmail());
-        final String jwtToken = jwtService.generateToken(user.get());
+        var user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new IllegalArgumentException("User not found"));;
+        final String jwtToken = jwtService.generateToken(user);
 
         return new AuthenticationResponse(jwtToken);
     }
