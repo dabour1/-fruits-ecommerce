@@ -45,7 +45,7 @@ public class AuthenticationServiceTest {
     private JwtService jwtService;
     @Mock
     private PasswordEncoder passwordEncoder;
- @Mock
+    @Mock
     private AuthenticationManager authenticationManager;
     
     @InjectMocks
@@ -122,7 +122,7 @@ public class AuthenticationServiceTest {
         
     }
     @Test
-    public void testAuthenticat_IncorrectEmail() throws Exception {
+    public void testAuthenticat_IncorrectEmailOrPassword() throws Exception {
         AuthenticationRequest request = new AuthenticationRequest("dabour8@gmail.com", "password");
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenThrow(BadCredentialsException.class);
         Exception exception =  assertThrows(IllegalArgumentException.class, () -> authenticationService.authenticat(request));
@@ -131,6 +131,21 @@ public class AuthenticationServiceTest {
         verify(authenticationManager ).authenticate(any(UsernamePasswordAuthenticationToken.class));
         verify(jwtService, times(0)).generateToken(user);
     }
+    @Test
+    public void testAuthenticat_UserNotFound() throws Exception {
+         
+        AuthenticationRequest request = new AuthenticationRequest("dabour8@gmail.com", "password");
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(null);
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.empty());
+         
+        Exception exception =  assertThrows(IllegalArgumentException.class, () -> authenticationService.authenticat(request));
+        
+        assertEquals("User not found", exception.getMessage());
+        verify(authenticationManager ).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        verify(jwtService, times(0)).generateToken(user);
+    }
     
+
+
 
 }
