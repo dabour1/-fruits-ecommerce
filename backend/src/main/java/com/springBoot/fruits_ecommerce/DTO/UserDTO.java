@@ -24,7 +24,7 @@ public class UserDTO {
 
     @NotBlank(message = "password is required")
     @NotNull(message = "password cannot be null")
-    @Size(min = 8, max = 250, message = "password must be between 8 and 50 characters")
+    @Size(min = 8, max = 250, message = "password must be at least 8 characters")
     private String password;
 
  
