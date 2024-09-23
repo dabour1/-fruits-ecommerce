@@ -8,11 +8,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.springBoot.fruits_ecommerce.DTO.UserDTO;
 import com.springBoot.fruits_ecommerce.models.AuthenticationRequest;
 import com.springBoot.fruits_ecommerce.models.AuthenticationResponse;
 import com.springBoot.fruits_ecommerce.models.User;
 import com.springBoot.fruits_ecommerce.services.AuthenticationService;
-
+import org.modelmapper.ModelMapper;
 import jakarta.validation.Valid;
  
 
@@ -22,10 +23,13 @@ public class AuthenticationController {
 
     @Autowired
     private AuthenticationService authenticationService;
+    @Autowired
+    private ModelMapper modelMapper;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register( @Valid @RequestBody User user) throws Exception {
-        return ResponseEntity.ok(authenticationService.register(user)) ;
+    public ResponseEntity<AuthenticationResponse> register( @Valid @RequestBody UserDTO userDTO) throws Exception {
+        User userEntity = modelMapper.map(userDTO,User.class);
+        return ResponseEntity.ok(authenticationService.register(userEntity)) ;
     }
     
     @PostMapping("/login")
