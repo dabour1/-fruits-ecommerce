@@ -85,6 +85,13 @@ public class AuthenticationServiceTest {
         verify(userRepository, times(0)).save(user);
     }
 
-   
+    @Test
+    public void testRegister_EmailAlreadyExists() {
+        when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        Exception exception =  assertThrows(IllegalArgumentException.class, () -> authenticationService.register(user));
+        assertEquals("Email already exists", exception.getMessage());
+        verify(userRepository, times(0)).save(user);
+    }
 
 }
