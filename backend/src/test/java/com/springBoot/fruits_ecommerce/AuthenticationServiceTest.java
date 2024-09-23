@@ -94,4 +94,14 @@ public class AuthenticationServiceTest {
         verify(userRepository, times(0)).save(user);
     }
 
+    @Test
+    public void testRegister_DefaultRoleNotFound() {
+        when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
+        when(roleRepository.findByName(RoleName.CLIENT)).thenReturn(Optional.empty());
+        Exception exception =  assertThrows(IllegalArgumentException.class, () -> authenticationService.register(user));
+        assertEquals("Default role not found", exception.getMessage());
+        verify(userRepository, times(0)).save(user);
+     }
+
 }
