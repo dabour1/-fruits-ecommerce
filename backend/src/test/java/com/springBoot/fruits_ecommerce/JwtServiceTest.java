@@ -55,11 +55,17 @@ public class JwtServiceTest {
     }
     @Test
     public void testIsTokenExpired() { 
-        String token = jwtService.generateToken(user, new HashMap<>());
- 
+        String token = jwtService.generateToken(user, new HashMap<>()); 
         Boolean isExpired = jwtService.isTokenExpired(token);
  
         assertFalse(isExpired);   
+    }
+
+    @Test
+    public void testValidateToken() { 
+        String token = jwtService.generateToken(user, new HashMap<>()); 
+        Boolean isValid = jwtService.validateToken(token, "user@example.com"); 
+        assertTrue(isValid);
     }
 
 }
