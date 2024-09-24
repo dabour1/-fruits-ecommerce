@@ -63,7 +63,7 @@ public class AuthenticationService {
                      request.getPassword())
             );
         } catch (BadCredentialsException e) {
-            throw new IllegalArgumentException("Incorrect email or password", e);
+            throw new IllegalArgumentException("Invalid credentials", e);
         }
 
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new IllegalArgumentException("User not found"));;

@@ -1,0 +1,117 @@
+openapi: "3.0.2"
+info:
+  title: Authentication API
+  description: API for user registration and login
+  version: "1.0"
+servers:
+  - url: http://localhost:8090/api
+    description: Local development server
+tags:
+  - name: Auth
+    description: Operations for user authentication
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "200":
+          description: Successful registration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login with user credentials
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Unauthorized (invalid credentials)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+          description: Username of the new user
+          example: johndoe
+        email:
+          type: string
+          description: Email of the new user
+          example: johndoe@example.com
+        password:
+          type: string
+          format: password
+          description: Password for the new user
+          example: P@ssw0rd
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          description: Registered user's email
+          example: johndoe@example.com
+        password:
+          type: string
+          format: password
+          description: User's password
+          example: P@ssw0rd
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT token returned upon successful authentication
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+          example: Invalid credentials
