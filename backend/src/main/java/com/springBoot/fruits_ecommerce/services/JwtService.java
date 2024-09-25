@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.springBoot.fruits_ecommerce.models.Role;
@@ -20,7 +21,11 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
-    private final String secret="12df32e69496a167c9d6196abec4bd4a25858e8da5fa4fe150ac9e03431ca36b";
+    @Value("${jwt.expiration}")
+    private long jwtExpirationMs;
+    @Value("${jwt.secret}")
+    private String SECRET;
+ 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
@@ -62,11 +67,11 @@ public class JwtService {
  
      private String createToken( User user, Map<String, Object> extraClaims) {
         return Jwts.builder().claims(extraClaims).subject(user.getEmail()).issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith( getSigningKey()).compact();
     }
      public SecretKey getSigningKey( ) {
-        byte [] keyBytes=Decoders.BASE64URL.decode(secret);
+        byte [] keyBytes=Decoders.BASE64URL.decode(SECRET);
 
         return Keys.hmacShaKeyFor(keyBytes);
 
