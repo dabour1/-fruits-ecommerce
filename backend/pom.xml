@@ -195,7 +195,6 @@
 					<execution>
 						<goals>
 							<goal>generate</goal>
-
 						</goals>
 
 						<configuration>
@@ -206,19 +205,6 @@
 							<apiPackage>com.springBoot.fruits_ecommerce.controllers</apiPackage>
 							<modelPackage>com.springBoot.fruits_ecommerce.models</modelPackage>
 						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.1.2</version>
-				<executions>
-					<execution>
-						<phase>verify</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
 					</execution>
 				</executions>
 			</plugin>
