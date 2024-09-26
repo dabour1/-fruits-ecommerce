@@ -21,7 +21,7 @@ import com.springBoot.fruits_ecommerce.filters.JwtRequestFilter;
 public class SecurityConfig {
 
   @Autowired
-  private UserDetailsService userDetailsServiceI;
+  private UserDetailsService userDetailsService;
 
   @Autowired
   private JwtRequestFilter jwtRequestFilter;
@@ -33,7 +33,7 @@ public class SecurityConfig {
             req -> req.requestMatchers("/api/auth/**")
                 .permitAll()
                 .anyRequest().authenticated())
-        .userDetailsService(userDetailsServiceI)
+        .userDetailsService(userDetailsService)
         .sessionManagement(session -> session
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class).build();
