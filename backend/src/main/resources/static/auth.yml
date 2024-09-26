@@ -16,6 +16,7 @@ paths:
       tags:
         - Auth
       summary: Register a new user
+      operationName: register
       requestBody:
         required: true
         content:
@@ -41,6 +42,7 @@ paths:
       tags:
         - Auth
       summary: Login with user credentials
+      operationName: authenticat
       requestBody:
         required: true
         content:

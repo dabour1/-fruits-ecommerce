@@ -195,6 +195,7 @@
 					<execution>
 						<goals>
 							<goal>generate</goal>
+
 						</goals>
 
 						<configuration>
