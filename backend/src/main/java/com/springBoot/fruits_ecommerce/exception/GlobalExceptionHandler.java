@@ -1,8 +1,6 @@
 
-
 package com.springBoot.fruits_ecommerce.exception;
 
- 
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -29,25 +27,29 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleResourceNotFoundException(ResourceNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
     // @ExceptionHandler(UniqueConstraintViolationException.class)
-    // public ResponseEntity<String> handleUniqueConstraintViolationException(UniqueConstraintViolationException ex) {
-    //     return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    // public ResponseEntity<String>
+    // handleUniqueConstraintViolationException(UniqueConstraintViolationException
+    // ex) {
+    // return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     // }
-    //  @ExceptionHandler(DataIntegrityViolationException.class)
-    // public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-    //     // Check if the exception message contains "unique" to identify unique constraint violations
-    //     if (ex.getMessage().contains("Email")) {
-    //         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
-    //     }
-    //     return new ResponseEntity<>("Database error occurred.", HttpStatus.INTERNAL_SERVER_ERROR);
+    // @ExceptionHandler(DataIntegrityViolationException.class)
+    // public ResponseEntity<String>
+    // handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+    // // Check if the exception message contains "unique" to identify unique
+    // constraint violations
+    // if (ex.getMessage().contains("Email")) {
+    // return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     // }
-     @ExceptionHandler(IllegalArgumentException.class)
+    // return new ResponseEntity<>("Database error occurred.",
+    // HttpStatus.INTERNAL_SERVER_ERROR);
+    // }
+    @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(IllegalArgumentException ex) {
-       
-            return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
-       
-        
+
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+
     }
 
-   
 }

@@ -1,5 +1,5 @@
 package com.springBoot.fruits_ecommerce.services;
- 
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +25,7 @@ public class JwtService {
     private long jwtExpirationMs;
     @Value("${jwt.secret}")
     private String SECRET;
- 
+
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
@@ -38,44 +38,49 @@ public class JwtService {
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
+
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().verifyWith( getSigningKey()).build().parseSignedClaims(token).getPayload();
+        return Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token).getPayload();
     }
 
     public Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
-     public String generateToken(User user) {
+
+    public String generateToken(User user) {
 
         Map<String, Object> extraClaims = addExtraClaims(user);
-    
-        return createToken( user,extraClaims );
+
+        return createToken(user, extraClaims);
     }
-    private Map <String, Object>addExtraClaims(User user ){
-          Map<String, Object> extraClaims = new HashMap<>();
+
+    private Map<String, Object> addExtraClaims(User user) {
+        Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("roles", user.getRoles().stream()
-            .map(Role::getName)
-            .collect(Collectors.toList()));
+                .map(Role::getName)
+                .collect(Collectors.toList()));
 
         return extraClaims;
 
     }
-     public String generateToken(User user,Map<String, Object> extraClaims) {
-    
-        return createToken( user,extraClaims);
+
+    public String generateToken(User user, Map<String, Object> extraClaims) {
+
+        return createToken(user, extraClaims);
     }
- 
-     private String createToken( User user, Map<String, Object> extraClaims) {
-        return Jwts.builder().claims(extraClaims).subject(user.getEmail()).issuedAt(new Date(System.currentTimeMillis()))
+
+    private String createToken(User user, Map<String, Object> extraClaims) {
+        return Jwts.builder().claims(extraClaims).subject(user.getEmail())
+                .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith( getSigningKey()).compact();
+                .signWith(getSigningKey()).compact();
     }
-     public SecretKey getSigningKey( ) {
-        byte [] keyBytes=Decoders.BASE64URL.decode(SECRET);
+
+    public SecretKey getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64URL.decode(SECRET);
 
         return Keys.hmacShaKeyFor(keyBytes);
 
-       
     }
 
     public Boolean validateToken(String token, String username) {

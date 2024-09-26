@@ -1,5 +1,5 @@
 package com.springBoot.fruits_ecommerce.DTO;
- 
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
- 
+
 public class UserDTO {
     @NotBlank(message = "username is required")
     @NotNull(message = "username cannot be null")
@@ -27,6 +27,4 @@ public class UserDTO {
     @Size(min = 8, max = 250, message = "password must be at least 8 characters")
     private String password;
 
- 
 }
-

@@ -20,7 +20,8 @@ public class LoggingAspect {
 
     @Before("execution(* com.springBoot.fruits_ecommerce.services.*.*(..))")
     public void logBeforeMethodCall(JoinPoint joinPoint) {
-        logger.info("Entering method: {} with arguments: {}", joinPoint.getSignature().toShortString(), Arrays.toString(joinPoint.getArgs()));
+        logger.info("Entering method: {} with arguments: {}", joinPoint.getSignature().toShortString(),
+                Arrays.toString(joinPoint.getArgs()));
     }
 
     @Around("execution(* com.springBoot.fruits_ecommerce.services.*.*(..))")

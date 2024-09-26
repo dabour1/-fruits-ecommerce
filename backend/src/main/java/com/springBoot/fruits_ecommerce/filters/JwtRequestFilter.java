@@ -27,34 +27,33 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtService jwtService;
 
-     
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                @NonNull HttpServletResponse response,
-                                @NonNull FilterChain chain)
-                                 throws ServletException, IOException 
-    {
-            if (isAuthRequest(request)) {
-                chain.doFilter(request, response);
-                return;
-            }
-        
-            String jwt = extractJwtFromRequest(request);
-            String email = (jwt != null) ? jwtService.extractEmail(jwt) : null;
-        
-            if (email != null && isNotAuthenticated()) {
-                authenticateUser(request, jwt, email);
-            }
-        
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain chain)
+            throws ServletException, IOException {
+        if (isAuthRequest(request)) {
             chain.doFilter(request, response);
+            return;
+        }
+
+        String jwt = extractJwtFromRequest(request);
+        String email = (jwt != null) ? jwtService.extractEmail(jwt) : null;
+
+        if (email != null && isNotAuthenticated()) {
+            authenticateUser(request, jwt, email);
+        }
+
+        chain.doFilter(request, response);
     }
+
     private boolean isAuthRequest(HttpServletRequest request) {
         return request.getServletPath().contains("/api/auth");
     }
 
     private String extractJwtFromRequest(HttpServletRequest request) {
         final String authorizationHeader = request.getHeader("Authorization");
-        
+
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             return authorizationHeader.substring(7);
         }
@@ -68,18 +67,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private void authenticateUser(HttpServletRequest request, String jwt, String email) {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
 
-        if (jwtService.validateToken(jwt, userDetails.getUsername())) { 
-            UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        if (jwtService.validateToken(jwt, userDetails.getUsername())) {
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    userDetails, null, userDetails.getAuthorities());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-    
+
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
     }
 
-
-
 }
-
-
-
