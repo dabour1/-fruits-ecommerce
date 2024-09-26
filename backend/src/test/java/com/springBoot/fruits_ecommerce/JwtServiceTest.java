@@ -1,27 +1,25 @@
 package com.springBoot.fruits_ecommerce;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.springframework.test.context.TestPropertySource;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.springBoot.fruits_ecommerce.enums.RoleName;
 import com.springBoot.fruits_ecommerce.models.User;
 import com.springBoot.fruits_ecommerce.services.JwtService;
 
 import javax.crypto.SecretKey;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@TestPropertySource(properties = "jwt.expiration=3600000")
+@ExtendWith(MockitoExtension.class)
 public class JwtServiceTest {
     private JwtService jwtService;
     private SecretKey secretKey;
