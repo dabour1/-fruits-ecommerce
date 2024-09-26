@@ -56,7 +56,7 @@ public class AuthenticationServiceTest {
 
     @BeforeEach
     void setUp() {
-        clientRole = new Role(1L, RoleName.CLIENT);
+        clientRole = Role.createRole(RoleName.CLIENT);
         user = new User();
         user.setId(1L);
         user.setUsername("Dabour");

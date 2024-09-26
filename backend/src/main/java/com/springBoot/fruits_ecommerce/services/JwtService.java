@@ -70,9 +70,11 @@ public class JwtService {
     }
 
     private String createToken(User user, Map<String, Object> extraClaims) {
+        System.out.println("-----------------------" + jwtExpirationMs + "-----------------------" +
+                1000 * 60 * 60 * 10);
         return Jwts.builder().claims(extraClaims).subject(user.getEmail())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(getSigningKey()).compact();
     }
 

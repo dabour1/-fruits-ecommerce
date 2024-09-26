@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.test.context.TestPropertySource;
 
 import com.springBoot.fruits_ecommerce.enums.RoleName;
 import com.springBoot.fruits_ecommerce.models.User;
@@ -20,6 +21,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@TestPropertySource(properties = "jwt.expiration=3600000")
 public class JwtServiceTest {
     private JwtService jwtService;
     private SecretKey secretKey;

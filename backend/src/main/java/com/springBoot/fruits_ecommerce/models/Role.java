@@ -11,14 +11,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+
 @Table(name = "roles")
 public class Role {
     @Id
@@ -29,5 +28,11 @@ public class Role {
     @NotNull(message = "password cannot be null")
     @Enumerated(EnumType.STRING)
     private RoleName name;
+
+    public static Role createRole(RoleName roleName) {
+        Role role = new Role();
+        role.setName(roleName);
+        return role;
+    }
 
 }
