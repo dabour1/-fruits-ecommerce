@@ -1,17 +1,9 @@
 package com.springBoot.fruits_ecommerce.models;
 
-import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-
-import java.util.*;
 import javax.annotation.Generated;
 
 /**
@@ -32,9 +24,10 @@ public class ErrorResponse {
 
   /**
    * Error code
+   * 
    * @return code
    */
-  
+
   @Schema(name = "code", example = "500", description = "Error code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("code")
   public Integer getCode() {
@@ -52,9 +45,10 @@ public class ErrorResponse {
 
   /**
    * Error message
+   * 
    * @return message
    */
-  
+
   @Schema(name = "message", example = "Internal server error", description = "Error message", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("message")
   public String getMessage() {
@@ -104,4 +98,3 @@ public class ErrorResponse {
     return o.toString().replace("\n", "\n    ");
   }
 }
-
