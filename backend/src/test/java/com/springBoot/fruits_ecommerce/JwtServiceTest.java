@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.springBoot.fruits_ecommerce.enums.RoleName;
 import com.springBoot.fruits_ecommerce.models.User;
@@ -33,6 +34,7 @@ public class JwtServiceTest {
         doReturn(secretKey).when(jwtService).getSigningKey();
         user = new User();
         user.setEmail("user@example.com");
+        ReflectionTestUtils.setField(jwtService, "jwtExpirationMs", 3600000L);
     }
 
     @Test

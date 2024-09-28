@@ -22,14 +22,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RegisterRequest"
+              $ref: "#/components/schemas/RegistrationRequest"
       responses:
         "200":
           description: Successful registration
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthResponse"
+                $ref: "#/components/schemas/AuthenticationResponse"
         "400":
           description: Invalid input data
           content:
@@ -48,14 +48,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/LoginRequest"
+              $ref: "#/components/schemas/AuthenticationRequest"
       responses:
         "200":
           description: Successful login
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthResponse"
+                $ref: "#/components/schemas/AuthenticationResponse"
         "401":
           description: Unauthorized (invalid credentials)
           content:
@@ -65,7 +65,7 @@ paths:
 
 components:
   schemas:
-    RegisterRequest:
+    RegistrationRequest:
       type: object
       required:
         - username
@@ -86,7 +86,7 @@ components:
           description: Password for the new user
           example: P@ssw0rd
 
-    LoginRequest:
+    AuthenticationRequest:
       type: object
       required:
         - email
@@ -102,7 +102,7 @@ components:
           description: User's password
           example: P@ssw0rd
 
-    AuthResponse:
+    AuthenticationResponse:
       type: object
       properties:
         token:

@@ -55,7 +55,7 @@ public class AuthenticationService {
 
     }
 
-    public AuthenticationResponse authenticat(AuthenticationRequest request) throws Exception {
+    public AuthenticationResponse authenticat(AuthenticationRequest request) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(),
