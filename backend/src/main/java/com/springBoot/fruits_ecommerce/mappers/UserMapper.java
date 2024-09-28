@@ -6,7 +6,6 @@ import com.springBoot.fruits_ecommerce.models.User;
 import com.springBoot.fruits_ecommerce.models.RegistrationRequest;
 
 @Mapper(componentModel = "spring")
-
 public interface UserMapper {
     @Mapping(target = "email", source = "registrationRequest.email")
     @Mapping(target = "password", source = "registrationRequest.password")
