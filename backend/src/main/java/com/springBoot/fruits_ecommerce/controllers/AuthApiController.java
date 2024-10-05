@@ -4,8 +4,7 @@ import com.springBoot.fruits_ecommerce.models.AuthenticationRequest;
 import com.springBoot.fruits_ecommerce.models.AuthenticationResponse;
 import com.springBoot.fruits_ecommerce.models.RegistrationRequest;
 import com.springBoot.fruits_ecommerce.models.User;
-import com.springBoot.fruits_ecommerce.mappers.UserMapper;
-
+import com.springBoot.fruits_ecommerce.mappers.MapRegistrationRequest;
 import com.springBoot.fruits_ecommerce.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,7 +21,7 @@ import java.util.Optional;
 import javax.annotation.Generated;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-09-28T07:25:00.809527300+03:00[Asia/Riyadh]", comments = "Generator version: 7.8.0")
-@RestController
+@Controller
 @RequestMapping("${openapi.authentication.base-path:/api}")
 public class AuthApiController implements AuthApi {
 
@@ -30,7 +29,7 @@ public class AuthApiController implements AuthApi {
     @Autowired
     private AuthenticationService authenticationService;
     @Autowired
-    private UserMapper userMapper;
+    private MapRegistrationRequest mapRegistrationRequest;
 
     @Autowired
     public AuthApiController(NativeWebRequest request) {
@@ -50,7 +49,7 @@ public class AuthApiController implements AuthApi {
     @Override
     public ResponseEntity<AuthenticationResponse> register(
             @Valid @RequestBody RegistrationRequest registrationRequest) {
-        User userEntity = userMapper.toEntity(registrationRequest);
+        User userEntity = mapRegistrationRequest.toEntity(registrationRequest);
 
         return ResponseEntity.ok(authenticationService.register(userEntity));
     }
