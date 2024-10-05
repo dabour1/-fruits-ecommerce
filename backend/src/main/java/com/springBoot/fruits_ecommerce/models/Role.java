@@ -24,8 +24,8 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "password is required")
-    @NotNull(message = "password cannot be null")
+    @NotBlank(message = "RoleName is required")
+    @NotNull(message = "RoleName cannot be null")
     @Enumerated(EnumType.STRING)
     private RoleName name;
 
