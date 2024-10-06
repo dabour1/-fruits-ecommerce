@@ -8,6 +8,9 @@ import org.springframework.core.io.UrlResource;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.springBoot.fruits_ecommerce.exception.FileStorageException;
+
+import java.io.IOException;
 import java.nio.file.Files;
 
 import java.nio.file.Path;
@@ -31,13 +34,16 @@ public class ImageService {
         try {
             String imageName = UUID.randomUUID().toString() + "_" +
                     image.getOriginalFilename();
+            if (imageName.contains("..")) {
+                throw new FileStorageException("Sorry! Filename contains invalid path sequence " + imageName);
+            }
             Path imagePath = Paths.get(uploadDir, imageName);
             Files.createDirectories(imagePath.getParent());
             Files.copy(image.getInputStream(), imagePath,
                     StandardCopyOption.REPLACE_EXISTING);
 
             return imageName;
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new RuntimeException("Error saving file: " +
                     image.getOriginalFilename(), e);
         }
@@ -53,7 +59,7 @@ public class ImageService {
             } else {
                 throw new RuntimeException("Could not read file: " + imageName);
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new RuntimeException("Error loading file: " + imageName, e);
         }
 
