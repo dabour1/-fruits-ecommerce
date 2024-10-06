@@ -33,6 +33,8 @@ public class Product {
 
     private String description;
 
+    private Integer quantity;
+
     private String imagePath;
 
 }
