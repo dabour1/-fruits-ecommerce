@@ -226,7 +226,7 @@
 							<generatorName>spring</generatorName>
 
 							<packageName>com.springBoot.fruits_ecommerce</packageName>
-							<apiPackage>com.springBoot.fruits_ecommerce.api </apiPackage>
+							<apiPackage>com.springBoot.fruits_ecommerce.controllers </apiPackage>
 							<modelPackage>com.springBoot.fruits_ecommerce.models</modelPackage>
 							<generateModels>false</generateModels>
 							<configOptions>
