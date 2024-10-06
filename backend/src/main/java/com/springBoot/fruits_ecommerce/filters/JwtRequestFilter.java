@@ -1,5 +1,6 @@
 package com.springBoot.fruits_ecommerce.filters;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,6 +10,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.springBoot.fruits_ecommerce.models.User;
 import com.springBoot.fruits_ecommerce.services.JwtService;
 
 import io.micrometer.common.lang.NonNull;
@@ -41,6 +43,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String email = (jwt != null) ? jwtService.extractEmail(jwt) : null;
 
         if (email != null && isNotAuthenticated()) {
+
             authenticateUser(request, jwt, email);
         }
 
@@ -67,12 +70,22 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private void authenticateUser(HttpServletRequest request, String jwt, String email) {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
 
-        if (jwtService.validateToken(jwt, userDetails.getUsername())) {
+        if (userDetails instanceof User) {
+            User user = (User) userDetails;
+            // Ensure roles are initialized
+            Hibernate.initialize(user.getRoles()); // Manually initialize roles
+
+            // You can also print the roles to verify
+            user.getRoles().forEach(role -> System.out.println("Role: " + role.getName()));
+        }
+
+        if (jwtService.validateToken(jwt, email)) {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            System.out.println("User authenticated");
         }
     }
 
