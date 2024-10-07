@@ -24,21 +24,31 @@ public class ProductService {
 
     public Product createProduct(AddProductRequest addProductRequest) {
         try {
-            String imageName = imageService.saveImage(addProductRequest.getImage());
-            Product product = new Product();
-            product.setName(addProductRequest.getName());
-            product.setUnit(addProductRequest.getUnit());
-            product.setPrice(addProductRequest.getPrice());
-            product.setQuantity(addProductRequest.getQuantity());
-            product.setDescription(addProductRequest.getDescription());
-            product.setImagePath(imageName);
-
-            Product savedProduct = productRepository.save(product);
-            return savedProduct;
+            String imageName = saveProductImage(addProductRequest);
+            Product product = buildProduct(addProductRequest, imageName);
+            return saveProduct(product);
         } catch (Exception e) {
-            throw new RuntimeException("Error while creating product: " + e.getMessage());
+            throw new RuntimeException("Error while creating product: " + e.getMessage(), e);
         }
+    }
 
+    private String saveProductImage(AddProductRequest addProductRequest) {
+        return imageService.saveImage(addProductRequest.getImage());
+    }
+
+    private Product buildProduct(AddProductRequest addProductRequest, String imageName) {
+        Product product = new Product();
+        product.setName(addProductRequest.getName());
+        product.setUnit(addProductRequest.getUnit());
+        product.setPrice(addProductRequest.getPrice());
+        product.setQuantity(addProductRequest.getQuantity());
+        product.setDescription(addProductRequest.getDescription());
+        product.setImagePath(imageName);
+        return product;
+    }
+
+    private Product saveProduct(Product product) {
+        return productRepository.save(product);
     }
 
     public void deleteProduct(Long productId) {
@@ -56,7 +66,7 @@ public class ProductService {
             try {
                 File imageFile = new File(imagePath);
                 if (imageFile.exists()) {
-                    boolean deleted = imageFile.delete();
+                    imageFile.delete();
                 }
             } catch (Exception e) {
                 throw new RuntimeException("Error while deleting image file: " + e.getMessage());
