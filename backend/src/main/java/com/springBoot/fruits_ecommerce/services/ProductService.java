@@ -40,9 +40,9 @@ public class ProductService {
         }
     }
 
-    public Product updateProduct(Long productId, AddProductRequest request) {
+    public Product updateProduct(Long id, AddProductRequest request) {
 
-        Product product = getProductById(productId);
+        Product product = getProductById(id);
 
         if (request.getImage() != null && !request.getImage().isEmpty()) {
 
