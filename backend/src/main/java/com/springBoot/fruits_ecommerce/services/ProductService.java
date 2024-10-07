@@ -41,15 +41,12 @@ public class ProductService {
     }
 
     public Product updateProduct(Long id, AddProductRequest request) {
-
         Product product = getProductById(id);
 
-        if (request.getImage() != null && !request.getImage().isEmpty()) {
-
-            deleteImageFile(product.getImagePath());
-            String newImagePath = saveProductImage(request);
-            product = buildProduct(request, newImagePath);
-
+        if (isImageUpdateRequested(request)) {
+            handleImageUpdate(product, request);
+        } else {
+            updateProductDetails(product, request);
         }
 
         return productRepository.save(product);
@@ -63,6 +60,28 @@ public class ProductService {
         productRepository.delete(product);
 
         deleteImageFile(imagePath);
+    }
+
+    private boolean isImageUpdateRequested(AddProductRequest request) {
+        return request.getImage() != null && !request.getImage().isEmpty();
+    }
+
+    private void handleImageUpdate(Product product, AddProductRequest request) {
+        deleteImageFile(product.getImagePath());
+        String newImagePath = saveProductImage(request);
+        updateProductImagePath(product, newImagePath);
+    }
+
+    private void updateProductImagePath(Product product, String newImagePath) {
+        product.setImagePath(newImagePath);
+    }
+
+    private void updateProductDetails(Product product, AddProductRequest request) {
+        product.setName(request.getName());
+        product.setUnit(request.getUnit());
+        product.setPrice(request.getPrice());
+        product.setQuantity(request.getQuantity());
+        product.setDescription(request.getDescription());
     }
 
     private String saveProductImage(AddProductRequest addProductRequest) {

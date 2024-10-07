@@ -28,7 +28,6 @@ public class AddProductRequest {
     @NotBlank(message = "Description is required")
     private String description;
 
-    @NotNull(message = "Image is required")
     private MultipartFile image;
 
 }
