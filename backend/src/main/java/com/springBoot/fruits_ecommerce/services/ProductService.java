@@ -3,8 +3,11 @@ package com.springBoot.fruits_ecommerce.services;
 import java.io.File;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import com.springBoot.fruits_ecommerce.exception.ResourceNotFoundException;
 import com.springBoot.fruits_ecommerce.models.AddProductRequest;
 import com.springBoot.fruits_ecommerce.models.Product;
@@ -20,6 +23,11 @@ public class ProductService {
 
     public Product getProductById(Long id) {
         return productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+    }
+
+    public Page<Product> getAllProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findAll(pageable);
     }
 
     public Product createProduct(AddProductRequest addProductRequest) {
