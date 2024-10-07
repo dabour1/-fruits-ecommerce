@@ -40,6 +40,31 @@ public class ProductService {
         }
     }
 
+    public Product updateProduct(Long productId, AddProductRequest request) {
+
+        Product product = getProductById(productId);
+
+        if (request.getImage() != null && !request.getImage().isEmpty()) {
+
+            deleteImageFile(product.getImagePath());
+            String newImagePath = saveProductImage(request);
+            product = buildProduct(request, newImagePath);
+
+        }
+
+        return productRepository.save(product);
+    }
+
+    public void deleteProduct(Long productId) {
+
+        Product product = getProductById(productId);
+        String imagePath = product.getImagePath();
+
+        productRepository.delete(product);
+
+        deleteImageFile(imagePath);
+    }
+
     private String saveProductImage(AddProductRequest addProductRequest) {
         return imageService.saveImage(addProductRequest.getImage());
     }
@@ -57,16 +82,6 @@ public class ProductService {
 
     private Product saveProduct(Product product) {
         return productRepository.save(product);
-    }
-
-    public void deleteProduct(Long productId) {
-
-        Product product = getProductById(productId);
-        String imagePath = product.getImagePath();
-
-        productRepository.delete(product);
-
-        deleteImageFile(imagePath);
     }
 
     private void deleteImageFile(String imagePath) {
