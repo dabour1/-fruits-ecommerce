@@ -1,5 +1,7 @@
 package com.springBoot.fruits_ecommerce.services;
 
+import java.io.File;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +39,30 @@ public class ProductService {
             throw new RuntimeException("Error while creating product: " + e.getMessage());
         }
 
+    }
+
+    public void deleteProduct(Long productId) {
+
+        Product product = getProductById(productId);
+        String imagePath = product.getImagePath();
+
+        productRepository.delete(product);
+
+        deleteImageFile(imagePath);
+    }
+
+    private void deleteImageFile(String imagePath) {
+        if (imagePath != null && !imagePath.isEmpty()) {
+            try {
+                File imageFile = new File(imagePath);
+                if (imageFile.exists()) {
+                    boolean deleted = imageFile.delete();
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Error while deleting image file: " + e.getMessage());
+            }
+
+        }
     }
 
 }

@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.springBoot.fruits_ecommerce.exception.FileStorageException;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -27,41 +28,47 @@ public class ImageService {
     private final String uploadDir = "files/";
 
     public String saveImage(MultipartFile image) {
+        validateImage(image);
 
+        String fileName = generateUniqueFileName(image);
+        validateFileName(fileName);
+
+        ensureUploadDirExists();
+
+        return storeImage(image, fileName);
+    }
+
+    private void validateImage(MultipartFile image) {
         if (image.isEmpty()) {
             throw new IllegalArgumentException("Image file is empty");
         }
-        try {
-            String imageName = UUID.randomUUID().toString() + "_" +
-                    image.getOriginalFilename();
-            if (imageName.contains("..")) {
-                throw new FileStorageException("Sorry! Filename contains invalid path sequence " + imageName);
-            }
-            Path imagePath = Paths.get(uploadDir, imageName);
-            Files.createDirectories(imagePath.getParent());
-            Files.copy(image.getInputStream(), imagePath,
-                    StandardCopyOption.REPLACE_EXISTING);
+    }
 
-            return imageName;
-        } catch (IOException e) {
-            throw new RuntimeException("Error saving file: " +
-                    image.getOriginalFilename(), e);
+    private String generateUniqueFileName(MultipartFile image) {
+        return uploadDir + UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
+    }
+
+    private void validateFileName(String fileName) {
+        if (fileName.contains("..")) {
+            throw new IllegalArgumentException("Invalid path sequence in file name: " + fileName);
         }
     }
 
-    public Resource loadImage(String imageName) {
-        Path imagePath = Paths.get(uploadDir).resolve(imageName).normalize();
-        try {
-            Resource resource = new UrlResource(imagePath.toUri());
-
-            if (resource.exists() && resource.isReadable()) {
-                return resource;
-            } else {
-                throw new RuntimeException("Could not read file: " + imageName);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Error loading file: " + imageName, e);
+    private void ensureUploadDirExists() {
+        File dir = new File(uploadDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
         }
-
     }
+
+    private String storeImage(MultipartFile image, String fileName) {
+        try {
+            Path path = Paths.get(fileName);
+            Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            return fileName;
+        } catch (IOException e) {
+            throw new RuntimeException("Error saving file: " + image.getOriginalFilename(), e);
+        }
+    }
+
 }
