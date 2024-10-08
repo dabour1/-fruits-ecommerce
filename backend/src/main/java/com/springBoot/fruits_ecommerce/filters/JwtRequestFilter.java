@@ -34,7 +34,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain chain)
             throws ServletException, IOException {
-        if (isAuthRequest(request)) {
+        if (isExcludedRequest(request)) {
             chain.doFilter(request, response);
             return;
         }
@@ -50,8 +50,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 
-    private boolean isAuthRequest(HttpServletRequest request) {
-        return request.getServletPath().contains("/api/auth");
+    private boolean isExcludedRequest(HttpServletRequest request) {
+        return request.getServletPath().contains("/api/auth") || request.getServletPath().contains("/files");
     }
 
     private String extractJwtFromRequest(HttpServletRequest request) {

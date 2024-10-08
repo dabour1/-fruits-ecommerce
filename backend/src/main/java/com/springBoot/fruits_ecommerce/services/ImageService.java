@@ -25,7 +25,7 @@ import java.nio.file.Paths;
 @Service
 public class ImageService {
 
-    private final String uploadDir = "files/";
+    private final String uploadDir = "uploads/files/";
 
     public String saveImage(MultipartFile image) {
         validateImage(image);
