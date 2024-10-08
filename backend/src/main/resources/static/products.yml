@@ -1,0 +1,225 @@
+openapi: "3.0.2"
+info:
+  title: Product Management API
+  description: API for managing products including creation, update, retrieval, and deletion
+  version: "1.0"
+servers:
+  - url: http://localhost:8090/api
+    description: Local development server
+tags:
+  - name: Products
+    description: Operations for managing products
+
+paths:
+  /products:
+    post:
+      tags:
+        - Products
+      summary: Create a new product
+      operationId: createProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddProductRequest"
+      responses:
+        "201":
+          description: Product successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "400":
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    get:
+      tags:
+        - Products
+      summary: Retrieve all products (with pagination)
+      operationId: getAllProducts
+      parameters:
+        - name: page
+          in: query
+          description: Page number (starting from 0)
+          schema:
+            type: int
+            default: 0
+        - name: size
+          in: query
+          description: Page size (number of products per page)
+          schema:
+            type: int
+            default: 10
+      responses:
+        "200":
+          description: Products retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedProducts"
+        "400":
+          description: Invalid pagination parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /products/{id}:
+    get:
+      tags:
+        - Products
+      summary: Retrieve a product by its ID
+      operationId: getProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the product to retrieve
+          schema:
+            type: Long
+      responses:
+        "200":
+          description: Product retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    put:
+      tags:
+        - Products
+      summary: Update an existing product by its ID
+      operationId: updateProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the product to update
+          schema:
+            type: Long
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddProductRequest"
+      responses:
+        "200":
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      tags:
+        - Products
+      summary: Delete a product by its ID
+      operationId: deleteProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the product to delete
+          schema:
+            type: Long
+      responses:
+        "204":
+          description: Product successfully deleted
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    AddProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the product
+          example: "Laptop"
+        unit:
+          type: string
+          description: Unit of the product
+          example: "pcs"
+        price:
+          type: number
+          format: float
+          description: Price of the product
+          example: 1200.00
+        quantity:
+          type: integer
+          description: Quantity of the product
+          example: 100
+        description:
+          type: string
+          description: Description of the product
+          example: "A high-end gaming laptop"
+        image:
+          type: string
+          format: binary
+          description: Image of the product
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        unit:
+          type: string
+        price:
+          type: number
+          format: float
+        quantity:
+          type: integer
+        description:
+          type: string
+        imagePath:
+          type: string
+
+    PaginatedProducts:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/Product"
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+        size:
+          type: integer
+        number:
+          type: integer
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+          example: "Invalid input"
