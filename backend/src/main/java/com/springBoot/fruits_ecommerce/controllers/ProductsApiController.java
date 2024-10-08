@@ -1,7 +1,10 @@
 package com.springBoot.fruits_ecommerce.controllers;
 
+import com.springBoot.fruits_ecommerce.mappers.MapRegistrationRequest;
+import com.springBoot.fruits_ecommerce.mappers.ProductMapper;
 import com.springBoot.fruits_ecommerce.models.AddProductRequest;
 import com.springBoot.fruits_ecommerce.models.ErrorResponse;
+import com.springBoot.fruits_ecommerce.models.PaginatedProducts;
 import com.springBoot.fruits_ecommerce.models.Product;
 import com.springBoot.fruits_ecommerce.services.ProductService;
 
@@ -37,6 +40,9 @@ public class ProductsApiController implements ProductsApi {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private ProductMapper productMapper;
+
     private final NativeWebRequest request;
 
     @Autowired
@@ -50,11 +56,13 @@ public class ProductsApiController implements ProductsApi {
     }
 
     @Override
-    public ResponseEntity<Page<Product>> getAllProducts(
+    public ResponseEntity<PaginatedProducts> getAllProducts(
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size) {
-        Page<Product> products = productService.getAllProducts(page, size);
-        return ResponseEntity.ok(products);
+        Page<Product> productsPage = productService.getAllProducts(page, size);
+        PaginatedProducts paginatedProducts = productMapper.toPaginatedProducts(productsPage);
+
+        return ResponseEntity.ok(paginatedProducts);
     }
 
     @Override

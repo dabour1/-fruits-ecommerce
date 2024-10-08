@@ -47,13 +47,13 @@ paths:
           in: query
           description: Page number (starting from 0)
           schema:
-            type: int
+            type: integer
             default: 0
         - name: size
           in: query
           description: Page size (number of products per page)
           schema:
-            type: int
+            type: integer
             default: 10
       responses:
         "200":
@@ -81,7 +81,7 @@ paths:
           required: true
           description: ID of the product to retrieve
           schema:
-            type: Long
+            type: long
       responses:
         "200":
           description: Product retrieved successfully
@@ -107,7 +107,7 @@ paths:
           required: true
           description: ID of the product to update
           schema:
-            type: Long
+            type: long
       requestBody:
         required: true
         content:
@@ -139,7 +139,7 @@ paths:
           required: true
           description: ID of the product to delete
           schema:
-            type: Long
+            type: long
       responses:
         "204":
           description: Product successfully deleted
