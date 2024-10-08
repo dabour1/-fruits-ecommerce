@@ -1,4 +1,4 @@
-package com.springBoot.fruits_ecommerce.controllers;
+package com.springBoot.fruits_ecommerce.api;
 
 import com.springBoot.fruits_ecommerce.mappers.MapRegistrationRequest;
 import com.springBoot.fruits_ecommerce.mappers.ProductMapper;

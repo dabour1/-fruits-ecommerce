@@ -1,4 +1,4 @@
-package com.springBoot.fruits_ecommerce.controllers;
+package com.springBoot.fruits_ecommerce.api;
 
 import com.springBoot.fruits_ecommerce.models.AuthenticationRequest;
 import com.springBoot.fruits_ecommerce.models.AuthenticationResponse;
