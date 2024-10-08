@@ -12,6 +12,7 @@ import com.springBoot.fruits_ecommerce.exception.ResourceNotFoundException;
 import com.springBoot.fruits_ecommerce.models.AddProductRequest;
 import com.springBoot.fruits_ecommerce.models.Product;
 import com.springBoot.fruits_ecommerce.repositorys.ProductRepository;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -31,6 +32,9 @@ public class ProductService {
     }
 
     public Product createProduct(AddProductRequest addProductRequest) {
+        if (!checkNameUniques(addProductRequest.getName())) {
+            throw new IllegalArgumentException("Product name must be unique");
+        }
         try {
             String imageName = saveProductImage(addProductRequest);
             Product product = buildProduct(addProductRequest, imageName);
@@ -42,6 +46,7 @@ public class ProductService {
 
     public Product updateProduct(Long id, AddProductRequest request) {
         Product product = getProductById(id);
+        validateUniqueProductName(id, request.getName());
 
         if (isImageUpdateRequested(request)) {
             handleImageUpdate(product, request);
@@ -60,6 +65,22 @@ public class ProductService {
         productRepository.delete(product);
 
         deleteImageFile(imagePath);
+    }
+
+    private void validateUniqueProductName(Long id, String productName) {
+        Optional<Product> productOpt = findProductByName(productName);
+        if (productOpt.isPresent() && !productOpt.get().getId().equals(id)) {
+            throw new IllegalArgumentException("Product name must be unique");
+        }
+    }
+
+    private boolean checkNameUniques(String name) {
+        Optional<Product> existsProduct = productRepository.findFirstByName(name);
+        return !existsProduct.isPresent();
+    }
+
+    private Optional<Product> findProductByName(String name) {
+        return productRepository.findFirstByName(name);
     }
 
     private boolean isImageUpdateRequested(AddProductRequest request) {
