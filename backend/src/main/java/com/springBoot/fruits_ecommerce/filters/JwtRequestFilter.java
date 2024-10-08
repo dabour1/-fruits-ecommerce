@@ -72,10 +72,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (userDetails instanceof User) {
             User user = (User) userDetails;
-            // Ensure roles are initialized
-            Hibernate.initialize(user.getRoles()); // Manually initialize roles
+          
+            Hibernate.initialize(user.getRoles());  
 
-            // You can also print the roles to verify
+          
             user.getRoles().forEach(role -> System.out.println("Role: " + role.getName()));
         }
 
