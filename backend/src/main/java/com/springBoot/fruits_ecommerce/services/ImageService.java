@@ -38,6 +38,20 @@ public class ImageService {
         return storeImage(image, fileName);
     }
 
+    public void deleteImageFile(String imagePath) {
+        if (imagePath != null && !imagePath.isEmpty()) {
+            try {
+                File imageFile = new File(imagePath);
+                if (imageFile.exists()) {
+                    imageFile.delete();
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Error while deleting image file: " + e.getMessage());
+            }
+
+        }
+    }
+
     private void validateImage(MultipartFile image) {
         if (image.isEmpty()) {
             throw new IllegalArgumentException("Image file is empty");

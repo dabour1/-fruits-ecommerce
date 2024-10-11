@@ -64,7 +64,7 @@ public class ProductService {
 
         productRepository.delete(product);
 
-        deleteImageFile(imagePath);
+        imageService.deleteImageFile(imagePath);
     }
 
     private void validateUniqueProductName(Long id, String productName) {
