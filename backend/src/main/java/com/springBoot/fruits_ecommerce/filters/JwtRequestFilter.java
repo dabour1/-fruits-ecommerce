@@ -51,7 +51,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private boolean isExcludedRequest(HttpServletRequest request) {
-        return request.getServletPath().contains("/api/auth") || request.getServletPath().contains("/files");
+        return request.getServletPath().contains("/api/auth") || request.getServletPath().contains("/images");
     }
 
     private String extractJwtFromRequest(HttpServletRequest request) {
@@ -69,15 +69,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private void authenticateUser(HttpServletRequest request, String jwt, String email) {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
-
-        if (userDetails instanceof User) {
-            User user = (User) userDetails;
-          
-            Hibernate.initialize(user.getRoles());  
-
-          
-            user.getRoles().forEach(role -> System.out.println("Role: " + role.getName()));
-        }
 
         if (jwtService.validateToken(jwt, email)) {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(

@@ -30,7 +30,7 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return http.csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(req -> req
-            .requestMatchers("/api/auth/**", "/files/**")
+            .requestMatchers("/api/auth/**", "/images/**")
             .permitAll()
             .anyRequest().authenticated())
         .userDetailsService(userDetailsService)
