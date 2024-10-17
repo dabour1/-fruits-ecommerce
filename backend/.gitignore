@@ -32,7 +32,7 @@ build/
 
 ### VS Code ###
 .vscode/
-
+files/
 logs/
  
  # Ignore application.properties

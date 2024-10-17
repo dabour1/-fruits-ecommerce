@@ -29,13 +29,15 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return http.csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(
-            req -> req.requestMatchers("/api/auth/**")
-                .permitAll()
-                .anyRequest().authenticated())
+        .authorizeHttpRequests(req -> req
+            .requestMatchers("/api/auth/**", "/images/**")
+            .permitAll()
+            .anyRequest().authenticated())
         .userDetailsService(userDetailsService)
         .sessionManagement(session -> session
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class).build();
+        .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+        .build();
+
   }
 }
