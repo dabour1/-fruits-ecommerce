@@ -25,15 +25,16 @@ public class CustomerRelatedInformation {
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
-    @NotNull(message = "Shipping Address cannot be null")
-    @NotBlank(message = "Shipping Address is required")
-    @OneToOne
-    @JoinColumn(name = "shipping_address_id")
+    @OneToOne(mappedBy = "customerRelatedInformation")
+
     private ShippingAddress shippingAddress;
     @NotNull(message = "Billing Address cannot be null")
     @NotBlank(message = "Billing Address is required")
-    @OneToOne
-    @JoinColumn(name = "billing_address_id")
+    @OneToOne(mappedBy = "customerRelatedInformation")
+
     private BillingAddress billingAddress;
+
+    @OneToOne(mappedBy = "customerRelatedInformation")
+    private CreditCardInfo creditCardInfo;
 
 }
