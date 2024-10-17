@@ -20,16 +20,14 @@ public class CustomerRelatedInformation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull(message = "User ID cannot be null")
-    @NotBlank(message = "User ID is required")
+
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
     @OneToOne(mappedBy = "customerRelatedInformation")
 
     private ShippingAddress shippingAddress;
-    @NotNull(message = "Billing Address cannot be null")
-    @NotBlank(message = "Billing Address is required")
+
     @OneToOne(mappedBy = "customerRelatedInformation")
 
     private BillingAddress billingAddress;

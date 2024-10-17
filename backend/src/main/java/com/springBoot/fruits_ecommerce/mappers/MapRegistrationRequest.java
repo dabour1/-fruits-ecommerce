@@ -7,8 +7,8 @@ import com.springBoot.fruits_ecommerce.models.RegistrationRequest;
 
 @Mapper(componentModel = "spring")
 public interface MapRegistrationRequest {
-    @Mapping(target = "email", source = "registrationRequest.email")
-    @Mapping(target = "password", source = "registrationRequest.password")
-    @Mapping(target = "username", source = "registrationRequest.username")
-    User toEntity(RegistrationRequest registrationRequest);
+    // @Mapping(target = "email", source = "registrationRequest.email")
+    // @Mapping(target = "password", source = "registrationRequest.password")
+    // @Mapping(target = "username", source = "registrationRequest.username")
+    // User toEntity(RegistrationRequest registrationRequest);
 }

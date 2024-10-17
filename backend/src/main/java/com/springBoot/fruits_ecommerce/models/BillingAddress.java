@@ -20,8 +20,7 @@ public class BillingAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank(message = "Customer Related Information is required")
-    @NotNull(message = "Customer Related Information cannot be null")
+
     @OneToOne
     @JoinColumn(name = "customer_related_information_id")
     private CustomerRelatedInformation customerRelatedInformation;
