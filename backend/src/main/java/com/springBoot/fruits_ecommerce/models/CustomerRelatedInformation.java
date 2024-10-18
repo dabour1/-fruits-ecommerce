@@ -1,5 +1,8 @@
 package com.springBoot.fruits_ecommerce.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,14 +26,16 @@ public class CustomerRelatedInformation {
     @JoinColumn(name = "user_id")
     private User user;
     @OneToOne(mappedBy = "customerRelatedInformation")
-
+    @JsonManagedReference
     private ShippingAddress shippingAddress;
 
     @OneToOne(mappedBy = "customerRelatedInformation")
-
+    @JsonManagedReference
     private BillingAddress billingAddress;
 
     @OneToOne(mappedBy = "customerRelatedInformation")
+
+    @JsonManagedReference
     private CreditCardInfo creditCardInfo;
 
 }
