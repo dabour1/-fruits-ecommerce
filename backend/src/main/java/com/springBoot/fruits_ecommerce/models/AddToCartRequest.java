@@ -1,7 +1,7 @@
 package com.springBoot.fruits_ecommerce.models;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
