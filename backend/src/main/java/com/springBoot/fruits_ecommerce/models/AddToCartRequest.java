@@ -10,10 +10,11 @@ import lombok.NoArgsConstructor;
 public class AddToCartRequest {
 
     @NotNull(message = "user Id can't be null")
-    private int userId;
+    private Long userId;
 
     @NotNull(message = "product Id can't be null")
-    private int productId;
+    private Long productId;
     @NotNull(message = "quantity can't be null")
-    private int quantity;
+    private Integer quantity;
+
 }

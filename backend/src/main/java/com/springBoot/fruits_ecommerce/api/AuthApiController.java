@@ -25,12 +25,9 @@ import javax.annotation.Generated;
 @Controller
 @RequestMapping("${openapi.authentication.base-path:/api}")
 public class AuthApiController implements AuthApi {
-    private static final Logger logger = LoggerFactory.getLogger(AuthApiController.class);
     private final NativeWebRequest request;
     @Autowired
     private AuthenticationService authenticationService;
-    @Autowired
-    private MapRegistrationRequest mapRegistrationRequest;
 
     @Autowired
     public AuthApiController(NativeWebRequest request) {

@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springBoot.fruits_ecommerce.DTO.CartDetailsDTO;
+import com.springBoot.fruits_ecommerce.models.AddToCartRequest;
 import com.springBoot.fruits_ecommerce.models.Cart;
 import com.springBoot.fruits_ecommerce.services.CartService;
+
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/cart")
@@ -27,15 +30,15 @@ public class CartController {
         return ResponseEntity.ok(cartDetails);
     }
 
-    @PostMapping("/add")
     @PreAuthorize("hasRole('ROLE_CLIENT')")
-
+    @PostMapping("/add")
     public ResponseEntity<Cart> addProductToCart(
-            @RequestParam Long userId,
-            @RequestParam Long productId,
-            @RequestParam Integer quantity) {
+            @RequestBody AddToCartRequest addToCartRequest) {
 
-        Cart cart = cartService.addProductToCart(userId, productId, quantity);
+        Cart cart = cartService.addProductToCart(
+                addToCartRequest.getUserId(),
+                addToCartRequest.getProductId(),
+                addToCartRequest.getQuantity());
 
         return ResponseEntity.ok(cart);
     }
