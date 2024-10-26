@@ -1,0 +1,185 @@
+openapi: 3.0.0
+info:
+  title: Cart API
+  description: API for handling cart-related operations.
+  version: "1.0.0"
+
+paths:
+  /api/cart/details:
+    get:
+      tags:
+        - Cart
+      summary: Retrieve details of a user's cart
+      operationId: getCartDetails
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: long
+          description: ID of the user whose cart details are to be retrieved
+      responses:
+        "200":
+          description: Successfully retrieved cart details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CartDetailsResponse"
+        "400":
+          description: Invalid user ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/cart/add:
+    post:
+      tags:
+        - Cart
+      summary: Add a product to the user's cart
+      operationId: addProductToCart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddToCartRequest"
+      responses:
+        "200":
+          description: Product added to cart successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        "400":
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    CartDetailsResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Cart"
+          description: List of items in the cart
+        subtotal:
+          type: number
+          format: BigDecimal
+          description: Subtotal amount for all items in the cart
+        shippingCost:
+          type: number
+          format: BigDecimal
+          description: Shipping cost for the cart
+        total:
+          type: number
+          format: BigDecimal
+          description: Total cost for the cart after shipping and discounts
+
+    AddToCartRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+          description: ID of the user adding a product to the cart
+        productId:
+          type: integer
+          format: int64
+          description: ID of the product to add to the cart
+        quantity:
+          type: integer
+          format: int32
+          description: Quantity of the product to add
+      required:
+        - userId
+        - productId
+        - quantity
+
+    Cart:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the cart
+        user:
+          $ref: "#/components/schemas/User"
+        shippingCost:
+          type: number
+          format: double
+          description: Shipping cost for the cart
+        discount:
+          type: number
+          format: double
+          description: Discount applied to the cart
+        cartItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/CartItem"
+          description: List of items in the cart
+
+    CartItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the cart item
+        cart:
+          $ref: "#/components/schemas/Cart"
+        product:
+          $ref: "#/components/schemas/Product"
+        quantity:
+          type: integer
+          format: int32
+          description: Quantity of the product in the cart
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the user
+        username:
+          type: string
+          description: Username of the user
+        email:
+          type: string
+          format: email
+          description: Email of the user
+        password:
+          type: string
+          description: Password of the user
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        unit:
+          type: string
+        price:
+          type: number
+          format: float
+        quantity:
+          type: integer
+        description:
+          type: string
+        imagePath:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message describing the issue
