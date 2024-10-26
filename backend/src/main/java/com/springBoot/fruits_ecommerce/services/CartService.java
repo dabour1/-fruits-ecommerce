@@ -55,61 +55,43 @@ public class CartService {
         @Transactional
 
         public Cart addProductToCart(Long userId, Long productId, Integer quantity) {
-
-                User user = userRepository.findById(userId)
-                                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-                if (!userDetails.getUsername().equals(userRepository.findById(userId).get().getUsername())) {
-
-                        throw new IllegalArgumentException("You do not have permission to add to this cart");
-                }
-                Product product = productRepository.findById(productId)
-                                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-
-                Cart cart = cartRepository.findByUserId(userId)
-                                .orElseGet(() -> {
-                                        Cart newCart = new Cart();
-                                        newCart.setUser(user);
-                                        newCart.setShippingCost(shippingCost);
-                                        newCart.setDiscount(0.0);
-                                        return cartRepository.save(newCart);
-                                });
-
-                Optional<CartItem> existingCartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(),
-                                productId);
-
-                if (existingCartItem.isPresent()) {
-
-                        CartItem cartItem = existingCartItem.get();
-                        cartItem.setQuantity(cartItem.getQuantity() + quantity);
-                } else {
-
-                        CartItem cartItem = new CartItem();
-                        cartItem.setCart(cart);
-                        cartItem.setProduct(product);
-                        cartItem.setQuantity(quantity);
-                        cart.getCartItems().add(cartItem);
-                }
-
+                User user = findUserById(userId);
+                verifyUserAuthorization(userId);
+                Product product = findProductById(productId);
+                Cart cart = findOrCreateCart(user);
+                updateCartItems(cart, product, quantity);
                 return cartRepository.save(cart);
         }
 
         public CartDetailsResponse getCartDetails(Long userId) {
-                Cart cart = cartRepository.findByUserId(userId)
+                Cart cart = findCartByUserId(userId);
+                BigDecimal subtotal = calculateSubtotal(cart);
+                BigDecimal shippingCost = calculateShippingCost(cart);
+                BigDecimal total = subtotal.add(shippingCost);
+                List<CartItemDTO> items = mapCartItemsToDTOs(cart);
+
+                return new CartDetailsResponse(items, subtotal, shippingCost, total);
+        }
+
+        private Cart findCartByUserId(Long userId) {
+                return cartRepository.findByUserId(userId)
                                 .orElseThrow(() -> new ResourceNotFoundException(
                                                 "Cart not found for user id: " + userId));
+        }
 
-                BigDecimal subtotal = cart.getCartItems().stream()
+        private BigDecimal calculateSubtotal(Cart cart) {
+                return cart.getCartItems().stream()
                                 .map(item -> item.getProduct().getPrice()
                                                 .multiply(BigDecimal.valueOf(item.getQuantity())))
                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+        }
 
-                BigDecimal shippingCost = BigDecimal.valueOf(cart.getShippingCost());
-                BigDecimal total = subtotal.add(shippingCost);
+        private BigDecimal calculateShippingCost(Cart cart) {
+                return BigDecimal.valueOf(cart.getShippingCost());
+        }
 
-                List<CartItemDTO> items = cart.getCartItems().stream()
+        private List<CartItemDTO> mapCartItemsToDTOs(Cart cart) {
+                return cart.getCartItems().stream()
                                 .map(item -> new CartItemDTO(
                                                 item.getProduct().getId(),
                                                 item.getProduct().getName(),
@@ -119,15 +101,62 @@ public class CartService {
                                                 item.getProduct().getPrice()
                                                                 .multiply(BigDecimal.valueOf(item.getQuantity()))))
                                 .collect(Collectors.toList());
-
-                return new CartDetailsResponse(items, subtotal, shippingCost, total);
         }
 
-        public boolean isCartOwner(Authentication authentication, Long userId) {
-                UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        private User findUserById(Long userId) {
                 return userRepository.findById(userId)
-                                .map(user -> user.getUsername().equals(userDetails.getUsername()))
-                                .orElse(false);
+                                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        }
+
+        private void verifyUserAuthorization(Long userId) {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+                String username = userDetails.getUsername();
+
+                if (!username.equals(userRepository.findById(userId).get().getUsername())) {
+                        throw new IllegalArgumentException("You do not have permission to add to this cart");
+                }
+        }
+
+        private Product findProductById(Long productId) {
+                return productRepository.findById(productId)
+                                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        }
+
+        private Cart findOrCreateCart(User user) {
+                return cartRepository.findByUserId(user.getId())
+                                .orElseGet(() -> createNewCart(user));
+        }
+
+        private Cart createNewCart(User user) {
+                Cart newCart = new Cart();
+                newCart.setUser(user);
+                newCart.setShippingCost(shippingCost);
+                newCart.setDiscount(0.0);
+                return cartRepository.save(newCart);
+        }
+
+        private void updateCartItems(Cart cart, Product product, Integer quantity) {
+                Optional<CartItem> existingCartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(),
+                                product.getId());
+
+                if (existingCartItem.isPresent()) {
+                        updateExistingCartItem(existingCartItem.get(), quantity);
+                } else {
+                        addNewCartItem(cart, product, quantity);
+                }
+        }
+
+        private void updateExistingCartItem(CartItem cartItem, Integer quantity) {
+                cartItem.setQuantity(cartItem.getQuantity() + quantity);
+        }
+
+        private void addNewCartItem(Cart cart, Product product, Integer quantity) {
+                CartItem cartItem = new CartItem();
+                cartItem.setCart(cart);
+                cartItem.setProduct(product);
+                cartItem.setQuantity(quantity);
+                cart.getCartItems().add(cartItem);
         }
 
 }
