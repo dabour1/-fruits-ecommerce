@@ -267,6 +267,27 @@
 							</configOptions>
 						</configuration>
 					</execution>
+					<execution>
+						<id>generate-cart-api</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/static/cart.yml</inputSpec>
+							<generatorName>spring</generatorName>
+							<packageName>com.springBoot.fruits_ecommerce</packageName>
+							<apiPackage>com.springBoot.fruits_ecommerce.api </apiPackage>
+							<modelPackage>com.springBoot.fruits_ecommerce.models </modelPackage>
+							<generateModels>false</generateModels>
+							<configOptions>
+								<interfaceOnly>true</interfaceOnly>
+								<useTags>true</useTags>
+							</configOptions>
+						</configuration>
+					</execution>
+
+
+
 				</executions>
 			</plugin>
 

@@ -3,7 +3,7 @@ package com.springBoot.fruits_ecommerce.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,6 +18,7 @@ import com.springBoot.fruits_ecommerce.filters.JwtRequestFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
   @Autowired
@@ -30,7 +31,8 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return http.csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(req -> req
-            .requestMatchers("/api/auth/**", "/images/**")
+            .requestMatchers("/api/auth/**", "/images/**", "/api/test**", "/error")
+
             .permitAll()
             .anyRequest().authenticated())
         .userDetailsService(userDetailsService)
